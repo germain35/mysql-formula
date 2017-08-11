@@ -1,0 +1,70 @@
+# -*- coding: utf-8 -*-
+# vim: ft=jinja:ts=2:sw=2
+
+{% import_yaml "mysql/defaults.yaml" as default_settings %}
+
+{%- set os         = salt['grains.get']('os') %}
+{%- set osrelease  = salt['grains.get']('osrelease') %}
+{%- set oscodename = salt['grains.get']('oscodename') %}
+
+{## Merge in mysql pillar ##}
+{% set mysql_settings = salt['pillar.get'](
+  'mysql',
+  default=default_settings.mysql,
+  merge=True)
+%}
+
+{% if mysql_settings.application|lower == 'percona' %}
+  {% set os_map = salt['grains.filter_by']({
+    'Debian': {
+      'debconf_utils_pkg': 'debconf-utils',
+      'server_pkg': 'percona-server-server-' ~ mysql_settings.version,
+      'client_pkg': 'percona-server-client-' ~ mysql_settings.version,
+      'server_svc': 'mysql',
+      'config_directory': '/etc/mysql/conf.d',
+      'config_file': '/etc/mysql/my.cnf',
+      'repo': {
+          'humanname': 'percona',
+          'name': 'deb http://repo.percona.com/apt ' ~ oscodename ~ ' main',
+          'file': '/etc/apt/sources.list.d/percona.list',
+          'keyid': '8507EFA5',
+          'keyserver': 'ha.pool.sks-keyservers.net',
+        }
+    },
+  }, grain='os_family', merge=salt['pillar.get']('mysql:lookup')) %}
+{% else %}
+  {% if mysql_settings.manage_repo %}
+    {% set os_map = salt['grains.filter_by']({
+      'Debian': {
+        'debconf_utils_pkg': 'debconf-utils',
+        'server_pkg': 'mysql-community-server',
+        'client_pkg': 'mysql-community-client',
+        'server_svc': 'mysql',
+        'config_directory': '/etc/mysql/conf.d',
+        'config_file': '/etc/mysql/my.cnf',
+        'repo': {
+            'humanname': 'mysql-' ~ mysql_settings.version,
+            'name': 'deb http://repo.mysql.com/apt/' ~ os|lower ~ '/ ' ~ oscodename|lower ~ ' mysql-' ~ mysql_settings.version,
+            'file': '/etc/apt/sources.list.d/mysql.list',
+            'keyid': 'A4A9406876FCBD3C456770C88C718D3B5072E1F5',
+            'keyserver': 'ha.pool.sks-keyservers.net',
+          }
+      },
+    }, grain='os_family', merge=salt['pillar.get']('mysql:lookup')) %}
+  {% else %}
+    {% set os_map = salt['grains.filter_by']({
+      'Debian': {
+        'debconf_utils_pkg': 'debconf-utils',
+        'server_pkg': 'mysql-server-' ~ mysql_settings.version,
+        'client_pkg': 'mysql-client-' ~ mysql_settings.version,
+        'server_svc': 'mysql',
+        'config_directory': '/etc/mysql/conf.d',
+        'config_file': '/etc/mysql/my.cnf',
+      },
+    }, grain='os_family', merge=salt['pillar.get']('mysql:lookup')) %}
+  {% endif %}
+{% endif %}
+
+
+{## Merge the flavor_map to the default settings ##}
+{% do salt['defaults.merge'](mysql_settings,os_map) %}
