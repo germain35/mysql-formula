@@ -27,7 +27,7 @@
           'humanname': 'percona',
           'name': 'deb http://repo.percona.com/apt ' ~ oscodename ~ ' main',
           'file': '/etc/apt/sources.list.d/percona.list',
-          'keyid': '8507EFA5',
+          'keyid': '4D1BB29D63D98E422B2113B19334A25F8507EFA5',
           'keyserver': 'ha.pool.sks-keyservers.net',
         }
     },
@@ -43,7 +43,7 @@
       'config_file': '/etc/mysql/my.cnf',
       'repo': {
           'humanname': 'mariadb',
-          'name': 'deb http://ftp.igh.cnrs.fr/pub/mariadb/repo/' ~ mysql_settings.version ~ '/' ~ os ~ ' ' ~ oscodename ~ ' main',
+          'name': 'deb http://ftp.igh.cnrs.fr/pub/mariadb/repo/' ~ mysql_settings.version ~ '/' ~ os|lower ~ ' ' ~ oscodename ~ ' main',
           'file': '/etc/apt/sources.list.d/mariadb.list',
           'keyid': '199369E5404BD5FC7D2FE43BCBCB082A1BB943DB',
           'keyserver': 'keyserver.ubuntu.com',

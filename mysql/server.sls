@@ -32,7 +32,6 @@ mysql_debconf:
     - data:
         '{{ debconf_prefix }}/root_password': {'type': 'password', 'value': '{{ mysql_settings.root_password }}'}
         '{{ debconf_prefix }}/root_password_again': {'type': 'password', 'value': '{{ mysql_settings.root_password }}'}
-        '{{ mysql_settings.server_pkg }}/root-pass': {'type': 'password', 'value': '{{ mysql_settings.root_password }}'}
         '{{ mysql_settings.server_pkg }}/data-dir': {'type': 'select', 'value': ''}
         '{{ mysql_settings.server_pkg }}/root-pass': {'type': 'password', 'value': '{{ mysql_settings.root_password }}'}
         '{{ mysql_settings.server_pkg }}/re-root-pass': {'type': 'password', 'value': '{{ mysql_settings.root_password }}'}
