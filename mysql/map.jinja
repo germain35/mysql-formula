@@ -32,6 +32,24 @@
         }
     },
   }, grain='os_family', merge=salt['pillar.get']('mysql:lookup')) %}
+{% elif mysql_settings.application|lower == 'mariadb' %}
+  {% set os_map = salt['grains.filter_by']({
+    'Debian': {
+      'debconf_utils_pkg': 'debconf-utils',
+      'server_pkg': 'mariadb-server-' ~ mysql_settings.version,
+      'client_pkg': 'mariadb-server-' ~ mysql_settings.version,
+      'server_svc': 'mysql',
+      'config_directory': '/etc/mysql/conf.d',
+      'config_file': '/etc/mysql/my.cnf',
+      'repo': {
+          'humanname': 'mariadb',
+          'name': 'deb http://ftp.igh.cnrs.fr/pub/mariadb/repo/' ~ mysql_settings.version ~ '/' ~ os ~ ' ' ~ oscodename ~ ' main',
+          'file': '/etc/apt/sources.list.d/mariadb.list',
+          'keyid': '199369E5404BD5FC7D2FE43BCBCB082A1BB943DB',
+          'keyserver': 'keyserver.ubuntu.com',
+        }
+    },
+  }, grain='os_family', merge=salt['pillar.get']('mysql:lookup')) %}
 {% else %}
   {% if mysql_settings.manage_repo %}
     {% set os_map = salt['grains.filter_by']({

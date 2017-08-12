@@ -10,7 +10,7 @@ include:
   - mysql.client
   - mysql.config
   - mysql.database
-  #- mysql.user
+  - mysql.user
   - mysql.service
 
 
@@ -20,10 +20,19 @@ mysql_debconf_utils_pkg:
   pkg.installed:
     - name: {{ mysql_settings.debconf_utils_pkg }}
 
+{%- if mysql_settings.application|lower == 'percona' %}
+  {%- set debconf_prefix = 'percona-server-server' %}
+{%- else %}
+  {%- set debconf_prefix = 'mysql-server' %}
+{%- endif %}
+
 mysql_debconf:
   debconf.set:
     - name: {{ mysql_settings.server_pkg }}
     - data:
+        '{{ debconf_prefix }}/root_password': {'type': 'password', 'value': '{{ mysql_settings.root_password }}'}
+        '{{ debconf_prefix }}/root_password_again': {'type': 'password', 'value': '{{ mysql_settings.root_password }}'}
+        '{{ mysql_settings.server_pkg }}/root-pass': {'type': 'password', 'value': '{{ mysql_settings.root_password }}'}
         '{{ mysql_settings.server_pkg }}/data-dir': {'type': 'select', 'value': ''}
         '{{ mysql_settings.server_pkg }}/root-pass': {'type': 'password', 'value': '{{ mysql_settings.root_password }}'}
         '{{ mysql_settings.server_pkg }}/re-root-pass': {'type': 'password', 'value': '{{ mysql_settings.root_password }}'}

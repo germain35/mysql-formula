@@ -1,0 +1,26 @@
+mysql:
+  application: percona
+  version: 5.7
+  manage_repo: True
+  reload_on_change: True
+  root_password: stupidpassword
+  config:
+    mysqld.cnf:
+      mysqld:
+        innodb_buffer_pool_size: 512M
+        innodb_log_file_size: 64M
+        innodb_flush_log_at_trx_commit: 2
+        query_cache_limit: 4M
+        query_cache_size: 64M
+  databases:
+    owncloud:
+      character_set: utf8
+      collate: utf8_general_ci
+  users:
+    owncloud:
+      host: localhost
+      password: stupidpassword
+      grants:
+        owncloud:
+          grant: 
+            - 'all privileges'
