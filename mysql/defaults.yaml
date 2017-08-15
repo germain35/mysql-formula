@@ -31,7 +31,6 @@ mysql:
         thread_stack:  192K
         thread_cache_size: 8
         table_open_cache: 4000
-        myisam_recover_options: BACKUP
         query_cache_limit: 1M
         query_cache_size: 16M
         log_error: /var/log/mysql/error.log
