@@ -47,6 +47,8 @@ mysql_debconf:
 mysql_server_pkg:
   pkg.installed:
     - name: {{ mysql_settings.server_pkg }}
+    - refresh: True
+    - allow_updates: True
     {%- if mysql_settings.manage_repo %}
     - require:
       - pkgrepo: mysql_repo

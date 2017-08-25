@@ -11,6 +11,8 @@ include:
 mysql_client_pkg:
   pkg.installed:
     - name: {{ mysql_settings.client_pkg }}
+    - refresh: True
+    - allow_updates: True
     {%- if mysql_settings.manage_repo %}
     - require:
       - pkgrepo: mysql_repo
