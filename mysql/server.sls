@@ -53,3 +53,9 @@ mysql_server_pkg:
     - require:
       - pkgrepo: mysql_repo
     {%- endif %}
+
+mysql_python_pkg:
+  pkg.installed:
+    - name: {{ mysql_settings.python_pkg }}
+    - require:
+      - pkg: mysql_server_pkg
