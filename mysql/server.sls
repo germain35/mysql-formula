@@ -48,14 +48,8 @@ mysql_server_pkg:
   pkg.installed:
     - name: {{ mysql_settings.server_pkg }}
     - refresh: True
-    - allow_updates: True
     {%- if mysql_settings.manage_repo %}
     - require:
       - pkgrepo: mysql_repo
+      - sls: mysql.client
     {%- endif %}
-
-mysql_python_pkg:
-  pkg.installed:
-    - name: {{ mysql_settings.python_pkg }}
-    - require:
-      - pkg: mysql_server_pkg
