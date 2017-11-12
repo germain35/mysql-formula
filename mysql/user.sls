@@ -1,9 +1,9 @@
-{% from "mysql/map.jinja" import mysql_settings with context %}
+{% from "mysql/map.jinja" import mysql with context %}
 
 include:
   - mysql.database
 
-{%- for user, params in mysql_settings.users.iteritems() %}
+{%- for user, params in mysql.users.iteritems() %}
 
 mysql_user_{{user}}:
   mysql_user.present:
@@ -12,7 +12,7 @@ mysql_user_{{user}}:
     - password: {{params.password}}
     - connection_host: localhost
     - connection_user: root
-    - connection_pass: '{{mysql_settings.root_password}}'
+    - connection_pass: '{{mysql.root_password}}'
     - connection_charset: utf8
 
   {%- if 'grants' in params %}
@@ -25,7 +25,7 @@ mysql_grant_{{user}}_{{db}}:
     - host: {{params.host}}
     - connection_host: localhost
     - connection_user: root
-    - connection_pass: '{{mysql_settings.root_password}}'
+    - connection_pass: '{{mysql.root_password}}'
     - connection_charset: utf8
     - require: 
       - mysql_user: mysql_user_{{user}}

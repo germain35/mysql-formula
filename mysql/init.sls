@@ -1,4 +1,4 @@
-{% from "mysql/map.jinja" import mysql_settings with context %}
+{% from "mysql/map.jinja" import mysql with context %}
 
 include:
   - mysql.client

@@ -1,25 +1,26 @@
 # -*- coding: utf-8 -*-
 # vim: ft=jinja:ts=2:sw=2
 
-{% import_yaml "mysql/defaults.yaml" as default_settings %}
-
 {%- set os         = salt['grains.get']('os') %}
 {%- set osrelease  = salt['grains.get']('osrelease') %}
 {%- set oscodename = salt['grains.get']('oscodename') %}
 
+{## Start with  defaults from defaults.sls ##}
+{% import_yaml "mysql/defaults.yaml" as default_settings %}
+
 {## Merge in mysql pillar ##}
-{% set mysql_settings = salt['pillar.get'](
+{% set mysql = salt['pillar.get'](
   'mysql',
   default=default_settings.mysql,
   merge=True)
 %}
 
-{% if mysql_settings.application|lower == 'percona' %}
+{% if mysql.application|lower == 'percona' %}
   {% set os_map = salt['grains.filter_by']({
     'Debian': {
       'debconf_utils_pkg': 'debconf-utils',
-      'server_pkg': 'percona-server-server-' ~ mysql_settings.version,
-      'client_pkg': 'percona-server-client-' ~ mysql_settings.version,
+      'server_pkg': 'percona-server-server-' ~ mysql.version,
+      'client_pkg': 'percona-server-client-' ~ mysql.version,
       'python_pkg': 'python-mysqldb',
       'server_svc': 'mysql',
       'config_directory': '/etc/mysql/conf.d',
@@ -33,19 +34,19 @@
         }
     },
   }, grain='os_family', merge=salt['pillar.get']('mysql:lookup')) %}
-{% elif mysql_settings.application|lower == 'mariadb' %}
+{% elif mysql.application|lower == 'mariadb' %}
   {% set os_map = salt['grains.filter_by']({
     'Debian': {
       'debconf_utils_pkg': 'debconf-utils',
-      'server_pkg': 'mariadb-server-' ~ mysql_settings.version,
-      'client_pkg': 'mariadb-server-' ~ mysql_settings.version,
+      'server_pkg': 'mariadb-server-' ~ mysql.version,
+      'client_pkg': 'mariadb-server-' ~ mysql.version,
       'python_pkg': 'python-mysqldb',
       'server_svc': 'mysql',
       'config_directory': '/etc/mysql/conf.d',
       'config_file': '/etc/mysql/my.cnf',
       'repo': {
           'humanname': 'mariadb',
-          'name': 'deb http://ftp.igh.cnrs.fr/pub/mariadb/repo/' ~ mysql_settings.version ~ '/' ~ os|lower ~ ' ' ~ oscodename ~ ' main',
+          'name': 'deb http://ftp.igh.cnrs.fr/pub/mariadb/repo/' ~ mysql.version ~ '/' ~ os|lower ~ ' ' ~ oscodename ~ ' main',
           'file': '/etc/apt/sources.list.d/mariadb.list',
           'keyid': '199369E5404BD5FC7D2FE43BCBCB082A1BB943DB',
           'keyserver': 'keyserver.ubuntu.com',
@@ -53,7 +54,7 @@
     },
   }, grain='os_family', merge=salt['pillar.get']('mysql:lookup')) %}
 {% else %}
-  {% if mysql_settings.manage_repo %}
+  {% if mysql.manage_repo %}
     {% set os_map = salt['grains.filter_by']({
       'Debian': {
         'debconf_utils_pkg': 'debconf-utils',
@@ -64,8 +65,8 @@
         'config_directory': '/etc/mysql/conf.d',
         'config_file': '/etc/mysql/my.cnf',
         'repo': {
-            'humanname': 'mysql-' ~ mysql_settings.version,
-            'name': 'deb http://repo.mysql.com/apt/' ~ os|lower ~ '/ ' ~ oscodename|lower ~ ' mysql-' ~ mysql_settings.version,
+            'humanname': 'mysql-' ~ mysql.version,
+            'name': 'deb http://repo.mysql.com/apt/' ~ os|lower ~ '/ ' ~ oscodename|lower ~ ' mysql-' ~ mysql.version,
             'file': '/etc/apt/sources.list.d/mysql.list',
             'keyid': 'A4A9406876FCBD3C456770C88C718D3B5072E1F5',
             'keyserver': 'ha.pool.sks-keyservers.net',
@@ -76,8 +77,8 @@
     {% set os_map = salt['grains.filter_by']({
       'Debian': {
         'debconf_utils_pkg': 'debconf-utils',
-        'server_pkg': 'mysql-server-' ~ mysql_settings.version,
-        'client_pkg': 'mysql-client-' ~ mysql_settings.version,
+        'server_pkg': 'mysql-server-' ~ mysql.version,
+        'client_pkg': 'mysql-client-' ~ mysql.version,
         'python_pkg': 'python-mysqldb',
         'server_svc': 'mysql',
         'config_directory': '/etc/mysql/conf.d',
@@ -89,4 +90,4 @@
 
 
 {## Merge the flavor_map to the default settings ##}
-{% do salt['defaults.merge'](mysql_settings,os_map) %}
+{% do mysql.update(os_map) %}

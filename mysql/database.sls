@@ -1,6 +1,6 @@
-{% from "mysql/map.jinja" import mysql_settings with context %}
+{% from "mysql/map.jinja" import mysql with context %}
 
-{%- for database, params in mysql_settings.databases.iteritems() %}
+{%- for database, params in mysql.databases.iteritems() %}
 mysql_database_{{database}}:
   mysql_database.present:
     - name: {{database}}
@@ -8,6 +8,6 @@ mysql_database_{{database}}:
     - collate: {{params.collate}}
     - connection_host: localhost
     - connection_user: root
-    - connection_pass: '{{mysql_settings.root_password}}'
+    - connection_pass: '{{mysql.root_password}}'
     - connection_charset: utf8
 {%- endfor %}

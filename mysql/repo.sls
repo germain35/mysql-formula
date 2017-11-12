@@ -1,14 +1,14 @@
-{% from "mysql/map.jinja" import mysql_settings with context %}
+{% from "mysql/map.jinja" import mysql with context %}
 
 {%- set os         = salt['grains.get']('os') %}
 {%- set osrelease  = salt['grains.get']('osrelease') %}
 {%- set oscodename = salt['grains.get']('oscodename') %}
 
-{%- if mysql_settings.manage_repo %}
-  {%- if 'repo' in mysql_settings and mysql_settings.repo is mapping %}
+{%- if mysql.manage_repo %}
+  {%- if 'repo' in mysql and mysql.repo is mapping %}
   mysql_repo:
     pkgrepo.managed:
-    {%- for k, v in mysql_settings.repo.iteritems() %}
+    {%- for k, v in mysql.repo.iteritems() %}
       - {{k}}: {{v}}
     {%- endfor %}
   {%- endif %}
