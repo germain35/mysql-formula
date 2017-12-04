@@ -1,4 +1,6 @@
 mysql:
+  client: True
+  server: True
   application: percona
   version: 5.7
   manage_repo: True

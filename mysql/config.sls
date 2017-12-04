@@ -1,7 +1,9 @@
 {% from "mysql/map.jinja" import mysql with context %}
 
+{%- if mysql.server %}
 include:
   - mysql.service
+{%- endif %}
 
 mysql_config_directory:
   file.directory:
@@ -36,13 +38,15 @@ mysql_config_directory:
         config: {{ content|default({}) }}
     - require_in:
       - pkg: mysql_client_pkg
+      {%- if mysql.server %}
       - pkg: mysql_server_pkg
+      {%- endif %}
     - require:
       - file: mysql_config_directory
-      {%- if mysql.reload_on_change %}
+    {%- if mysql.server %}
     - watch_in:
       - service: mysql_svc
-      {%- endif %}
+    {%- endif %}
   {%- endfor %}
 {%- endif %}
 
