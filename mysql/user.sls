@@ -3,7 +3,7 @@
 include:
   - mysql.database
 
-{%- for user, params in mysql.users.iteritems() %}
+{%- for user, params in mysql.get('users', {}).iteritems() %}
 
 mysql_user_{{user}}:
   mysql_user.present:
