@@ -4,7 +4,8 @@ mysql:
   application: percona
   version: 5.7
   manage_repo: True
-  reload_on_change: True
+  service_enabled: True
+  service_reload: True
   root_password: stupidpassword
   config:
     mysqld.cnf:

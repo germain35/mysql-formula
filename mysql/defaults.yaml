@@ -4,7 +4,8 @@ mysql:
   application: mysql
   version: 5.6
   manage_repo: False
-  reload_on_change: False
+  service_enabled: True
+  service_reload: False
   config:
     # defintions for my.cnf are going to overwrite default-config
     # every other file will managed in config directory

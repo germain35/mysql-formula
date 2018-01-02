@@ -6,9 +6,7 @@ include:
 mysql_svc:
   service.running:
     - name: {{ mysql.server_svc }}
-    - enable: True
-    {%- if mysql.reload_on_change %}
-    - reload: True
-    {%- endif %}
+    - enable: {{ mysql.service_enabled }}
+    - reload: {{ mysql.service_reload }}
     - require:
       - pkg: mysql_server_pkg
