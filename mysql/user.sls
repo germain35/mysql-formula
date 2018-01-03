@@ -8,7 +8,7 @@ include:
 mysql_user_{{user}}:
   mysql_user.present:
     - name: {{user}}
-    - host: {{params.host}}
+    - host: '{{params.host}}'
     - password: {{params.password}}
     - connection_host: {{params.get('connection_host', 'localhost')}}
     - connection_user: {{params.get('connection_user', 'root')}}
@@ -22,7 +22,7 @@ mysql_grant_{{user}}_{{db}}:
     - grant: {{db_params.grant|join(',')}}
     - database: {{db ~ '.*'}}
     - user: {{user}}
-    - host: {{params.host}}
+    - host: '{{params.host}}'
     - connection_host: {{params.get('connection_host', 'localhost')}}
     - connection_user: {{params.get('connection_user', 'root')}}
     - connection_pass: '{{params.get('connection_pass', mysql.root_password)}}'
