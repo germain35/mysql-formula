@@ -20,7 +20,7 @@ mysql_user_{{user}}:
 mysql_grant_{{user}}_{{db}}:
   mysql_grants.present:
     - grant: {{db_params.grant|join(',')}}
-    - database: {{db ~ '.*'}}
+    - database: '{{db ~ ".*"}}'
     - user: {{user}}
     - host: '{{params.host}}'
     - connection_host: {{params.get('connection_host', 'localhost')}}
