@@ -29,7 +29,6 @@ mysql_grant_{{user}}_{{db}}:
     - connection_charset: {{params.get('connection_charset', 'utf8')}}
     - require: 
       - mysql_user: mysql_user_{{user}}
-      - mysql_database: mysql_database_{{db}}
     {%- endfor %}
   {%- endif %}
 
