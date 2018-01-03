@@ -8,7 +8,7 @@ include:
 mysql_user_{{user}}:
   mysql_user.present:
     - name: {{user}}
-    - host: '{{params.host}}'
+    - host: {{params.host | yaml_dquote}}
     - password: {{params.password}}
     - connection_host: {{params.get('connection_host', 'localhost')}}
     - connection_user: {{params.get('connection_user', 'root')}}
