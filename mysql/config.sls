@@ -50,14 +50,15 @@ mysql_config_directory:
   {%- endfor %}
 {%- endif %}
 
-
-{%- for global, value in global_params.iteritems() %}
-  {%- if 'tmpdir' in global %}
+{%- if mysql.server %}
+  {%- for global, value in global_params.iteritems() %}
+    {%- if 'tmpdir' in global %}
 {{ value }}:
   file.directory:
     - mode: 1777
     - makedirs: True
     - require_in:
       - pkg: mysql_server_pkg
-  {%- endif %}
-{%- endfor %}
+    {%- endif %}
+  {%- endfor %}
+{%- endif %}
