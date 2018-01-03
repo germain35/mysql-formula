@@ -7,8 +7,6 @@
 include:
   - mysql.repo
   - mysql.config
-  - mysql.database
-  - mysql.user
 
 mysql_client_pkg:
   pkg.installed:

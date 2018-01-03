@@ -9,8 +9,6 @@ include:
   - mysql.repo
   - mysql.client
   - mysql.config
-  - mysql.database
-  - mysql.user
   - mysql.service
 
 

@@ -7,3 +7,5 @@ include:
   {%- if mysql.server %}
   - mysql.server
   {%- endif %}
+  - mysql.database
+  - mysql.user
