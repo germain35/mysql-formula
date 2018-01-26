@@ -59,6 +59,14 @@ mysql_config_directory:
     - makedirs: True
     - require_in:
       - pkg: mysql_server_pkg
+    {%- elif 'datadir' in global %}
+{{ value }}:
+  file.directory:
+    - mode: 700
+    - user: {{ global_params.user }}
+    - makedirs: True
+    - require_in:
+      - pkg: mysql_server_pkg
     {%- endif %}
   {%- endfor %}
 {%- endif %}
