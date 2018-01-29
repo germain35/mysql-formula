@@ -51,20 +51,28 @@ mysql_config_directory:
 {%- endif %}
 
 {%- if mysql.server %}
-  {%- for global, value in global_params.iteritems() %}
-    {%- if 'tmpdir' in global %}
-{{ value }}:
+
+  {%- if 'tmpdir' in global_params.keys() %}
+{{ global_params.get('tmpdir') }}:
   file.directory:
     - mode: 1777
     - makedirs: True
     - require_in:
       - pkg: mysql_server_pkg
-    {%- elif 'datadir' in global %}
-{{ value }}:
+  {%- elif 'datadir' in global_params.keys() %}
+{{ global_params.get('datadir') }}:
   file.directory:
     - makedirs: True
     - require_in:
       - pkg: mysql_server_pkg
-    {%- endif %}
-  {%- endfor %}
+  {%- endif %}
+
+mysql_root_conf:
+  file.managed:
+    - name: /root/.my.cnf
+    - source: salt://mysql/templates/my.cnf.j2
+    - template: jinja
+    - user: root
+    - mode: 600
+
 {%- endif %}
