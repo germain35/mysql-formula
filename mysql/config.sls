@@ -62,7 +62,6 @@ mysql_config_directory:
     {%- elif 'datadir' in global %}
 {{ value }}:
   file.directory:
-    - mode: 700
     - makedirs: True
     - require_in:
       - pkg: mysql_server_pkg
