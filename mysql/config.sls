@@ -63,7 +63,6 @@ mysql_config_directory:
 {{ value }}:
   file.directory:
     - mode: 700
-    - user: {{ global_params.user }}
     - makedirs: True
     - require_in:
       - pkg: mysql_server_pkg
