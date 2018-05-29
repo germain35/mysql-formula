@@ -25,6 +25,8 @@
       'server_svc': 'mysql',
       'config_directory': '/etc/mysql/conf.d',
       'config_file': '/etc/mysql/my.cnf',
+      'backup_script': '/usr/local/bin/backup.sh',
+      'backup_log': '/var/log/mysql/backup.log',
       'repo': {
           'humanname': 'percona',
           'name': 'deb http://repo.percona.com/apt ' ~ oscodename ~ ' main',
@@ -44,6 +46,8 @@
       'server_svc': 'mysql',
       'config_directory': '/etc/mysql/conf.d',
       'config_file': '/etc/mysql/my.cnf',
+      'backup_script': '/usr/local/bin/backup.sh',
+      'backup_log': '/var/log/mysql/backup.log',
       'repo': {
           'humanname': 'mariadb',
           'name': 'deb http://ftp.igh.cnrs.fr/pub/mariadb/repo/' ~ mysql.version ~ '/' ~ os|lower ~ ' ' ~ oscodename ~ ' main',
@@ -64,6 +68,8 @@
         'server_svc': 'mysql',
         'config_directory': '/etc/mysql/conf.d',
         'config_file': '/etc/mysql/my.cnf',
+        'backup_script': '/usr/local/bin/backup.sh',
+        'backup_log': '/var/log/mysql/backup.log',
         'repo': {
             'humanname': 'mysql-' ~ mysql.version,
             'name': 'deb http://repo.mysql.com/apt/' ~ os|lower ~ '/ ' ~ oscodename|lower ~ ' mysql-' ~ mysql.version,
@@ -83,6 +89,8 @@
         'server_svc': 'mysql',
         'config_directory': '/etc/mysql/conf.d',
         'config_file': '/etc/mysql/my.cnf',
+        'backup_script': '/usr/local/bin/backup.sh',
+        'backup_log': '/var/log/mysql/backup.log',
       },
     }, grain='os_family', merge=salt['pillar.get']('mysql:lookup')) %}
   {% endif %}

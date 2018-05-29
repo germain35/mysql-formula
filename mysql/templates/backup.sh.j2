@@ -1,0 +1,34 @@
+{%- from "mysql/map.jinja" import mysql with context -%}
+#!/bin/bash
+
+BACKUP_DIR="{{ mysql.backup.dir }}"
+RETENTION={{ mysql.backup.retention }}
+
+if [[ -z "$BACKUP_DIR" ]] || [[ "$BACKUP_DIR" == '/' ]]
+then
+  echo "error, backup directory is incorrect"
+  exit 1
+fi
+
+current_date=$(date +'%Y%m%d%H%M%S')
+
+echo "create backup directory"
+mkdir -p ${BACKUP_DIR}/${current_date}
+
+dbs=`mysql -N -B -e 'show databases' | grep -Ev "(information_schema|performance_schema|test)"`
+
+for db in $dbs
+do
+  echo -ne "backup $db..."
+  mysqldump --opt --routines --triggers "$db" | gzip > "${BACKUP_DIR}/${current_date}/${db}_${current_date}.sql.gz"
+  if [[ $? -eq 0 ]]
+  then
+    echo "OK"
+  else
+    echo "ERROR"
+  fi
+done
+
+echo
+echo -ne "purge old backups"
+find "${BACKUP_DIR}" -mtime +${RETENTION} -exec rm -vf {} \;

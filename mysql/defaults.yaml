@@ -3,11 +3,15 @@
 mysql:
   client: True
   server: False
+
   application: mysql
   version: 5.6
+
   manage_repo: False
+
   service_enabled: True
   service_reload: False
+
   config:
     # defintions for my.cnf are going to overwrite default-config
     # every other file will managed in config directory
@@ -43,3 +47,8 @@ mysql:
         max_allowed_packet: 16M
       isamchk:
         key_buffer_size: 16M
+
+  backup:
+    enabled: False
+    dir: /backup
+    retention: 7

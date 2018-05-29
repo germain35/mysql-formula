@@ -9,3 +9,6 @@ include:
   {%- endif %}
   - mysql.database
   - mysql.user
+  {%- if mysql.backup.enabled %}
+  - mysql.backup
+  {%- endif %}
