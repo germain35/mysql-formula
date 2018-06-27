@@ -8,7 +8,7 @@
   {%- if 'repo' in mysql and mysql.repo is mapping %}
   mysql_repo:
     pkgrepo.managed:
-    {%- for k, v in mysql.repo.iteritems() %}
+    {%- for k, v in mysql.repo.items() %}
       - {{k}}: {{v}}
     {%- endfor %}
   {%- endif %}

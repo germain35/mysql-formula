@@ -1,6 +1,6 @@
 {% from "mysql/map.jinja" import mysql with context %}
 
-{%- for database, params in mysql.get('databases', {}).iteritems() %}
+{%- for database, params in mysql.get('databases', {}).items() %}
 
 mysql_database_{{database}}:
   mysql_database.present:

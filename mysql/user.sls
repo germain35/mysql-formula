@@ -3,7 +3,7 @@
 include:
   - mysql.database
 
-{%- for user, params in mysql.get('users', {}).iteritems() %}
+{%- for user, params in mysql.get('users', {}).items() %}
 
 mysql_user_{{user}}:
   mysql_user.present:
@@ -16,7 +16,7 @@ mysql_user_{{user}}:
     - connection_charset: {{params.get('connection_charset', 'utf8')}}
 
   {%- if 'grants' in params %}
-    {%- for db, db_params in params.grants.iteritems() %}
+    {%- for db, db_params in params.grants.items() %}
 mysql_grant_{{user}}_{{db}}:
   mysql_grants.present:
     - grant: {{db_params.grant|join(',')}}
