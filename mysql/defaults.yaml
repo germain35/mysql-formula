@@ -12,6 +12,18 @@ mysql:
   service_enabled: True
   service_reload: False
 
+  # Database
+  character_set: latin1
+  collate: latin1_swedish_ci
+  connection_host: localhost
+  connection_user: root
+  connection_pass: None
+  connection_charset: utf8
+
+  # User
+  host: localhost
+  password: None
+
   config:
     # defintions for my.cnf are going to overwrite default-config
     # every other file will managed in config directory
