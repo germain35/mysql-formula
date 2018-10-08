@@ -52,8 +52,8 @@
           'humanname': 'mariadb',
           'name': 'deb http://ftp.igh.cnrs.fr/pub/mariadb/repo/' ~ mysql.version ~ '/' ~ os|lower ~ ' ' ~ oscodename ~ ' main',
           'file': '/etc/apt/sources.list.d/mariadb.list',
-          'keyid': '199369E5404BD5FC7D2FE43BCBCB082A1BB943DB',
-          'keyserver': 'keyserver.ubuntu.com',
+          'keyid': '177F4010FE56CA3336300305F1656F24C74CD1D8',
+          'keyserver': 'ha.pool.sks-keyservers.net',
         }
     },
   }, grain='os_family', merge=salt['pillar.get']('mysql:lookup')) %}
