@@ -20,7 +20,7 @@ dbs=`mysql -N -B -e 'show databases' | grep -Ev "(information_schema|performance
 for db in $dbs
 do
   echo -ne "backup $db..."
-  mysqldump --opt --routines --triggers "$db" | gzip > "${BACKUP_DIR}/${current_date}/${db}_${current_date}.sql.gz"
+  mysqldump --opt --routines --triggers --single-transaction "$db" | gzip > "${BACKUP_DIR}/${current_date}/${db}_${current_date}.sql.gz"
   if [[ $? -eq 0 ]]
   then
     echo "OK"
