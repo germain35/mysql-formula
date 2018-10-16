@@ -46,7 +46,7 @@
       'server_svc': 'mysql',
       'config_directory': '/etc/mysql/conf.d',
       'config_file': '/etc/mysql/my.cnf',
-      'backup_script': '/usr/local/bin/backup.sh',
+      'backup_script': '/usr/local/bin/mysql_backup.sh',
       'backup_log': '/var/log/mysql/backup.log',
       'repo': {
           'humanname': 'mariadb',
@@ -68,7 +68,7 @@
         'server_svc': 'mysql',
         'config_directory': '/etc/mysql/conf.d',
         'config_file': '/etc/mysql/my.cnf',
-        'backup_script': '/usr/local/bin/backup.sh',
+        'backup_script': '/usr/local/bin/mysql_backup.sh',
         'backup_log': '/var/log/mysql/backup.log',
         'repo': {
             'humanname': 'mysql-' ~ mysql.version,
@@ -89,7 +89,7 @@
         'server_svc': 'mysql',
         'config_directory': '/etc/mysql/conf.d',
         'config_file': '/etc/mysql/my.cnf',
-        'backup_script': '/usr/local/bin/backup.sh',
+        'backup_script': '/usr/local/bin/mysql_backup.sh',
         'backup_log': '/var/log/mysql/backup.log',
       },
     }, grain='os_family', merge=salt['pillar.get']('mysql:lookup')) %}
