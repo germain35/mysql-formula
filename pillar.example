@@ -3,10 +3,27 @@ mysql:
   server: True
   application: percona
   version: 5.7
+
   manage_repo: True
+
   service_enabled: True
   service_reload: True
+
   root_password: stupidpassword
+  character_set: utf8
+  collate: utf8_general_ci
+  connection_host: localhost
+  connection_user: root
+  connection_password: stupidpassword
+
+  backup:
+    enabled: True
+    dir: /backup
+    retention: 8
+    cron:
+      hour: '01'
+      minute: '05'
+
   config:
     mysqld.cnf:
       mysqld:
@@ -15,15 +32,17 @@ mysql:
         innodb_flush_log_at_trx_commit: 2
         query_cache_limit: 4M
         query_cache_size: 64M
+
   databases:
     owncloud:
       character_set: utf8
       collate: utf8_general_ci
+
   users:
     owncloud:
       host: localhost
       password: stupidpassword
       grants:
         owncloud:
-          grant: 
+          grant:
             - 'all privileges'
