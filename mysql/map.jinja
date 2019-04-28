@@ -8,24 +8,22 @@
 {## Start with  defaults from defaults.sls ##}
 {% import_yaml "mysql/defaults.yaml" as default_settings %}
 
-{## Merge in mysql pillar ##}
-{% set mysql = salt['pillar.get'](
-  'mysql',
-  default=default_settings.mysql,
-  merge=True)
-%}
+{% set application = salt['pillar.get']('mysql:application', default_settings.mysql.application) %}
 
-{% if mysql.application|lower == 'percona' %}
-  {% set os_map = salt['grains.filter_by']({
+{% if application|lower == 'percona' %}
+  {% set version       = "%s"|format(salt['pillar.get']('mysql:version', '5.7')) %}
+  {% set major_version = "%s"|format(version.split('.')[:2]|join('.')) %}
+  {% set pkg_suffix    = '-' ~ major_version  %}
+  {% set os_family_map = salt['grains.filter_by']({
     'Debian': {
       'debconf_utils_pkg': 'debconf-utils',
-      'server_pkg': 'percona-server-server-' ~ mysql.version,
-      'client_pkg': 'percona-server-client-' ~ mysql.version,
+      'server_pkg': 'percona-server-server' ~ pkg_suffix,
+      'client_pkg': 'percona-server-client' ~ pkg_suffix,
       'python_pkg': 'python-mysqldb',
       'server_svc': 'mysql',
       'config_directory': '/etc/mysql/conf.d',
       'config_file': '/etc/mysql/my.cnf',
-      'backup_script': '/usr/local/bin/mysql_backup.sh',
+      'backup_script': '/usr/local/bin/backup.sh',
       'backup_log': '/var/log/mysql/backup.log',
       'repo': {
           'humanname': 'percona',
@@ -36,30 +34,36 @@
         }
     },
   }, grain='os_family', merge=salt['pillar.get']('mysql:lookup')) %}
-{% elif mysql.application|lower == 'mariadb' %}
-  {% set os_map = salt['grains.filter_by']({
+{% elif application|lower == 'mariadb' %}
+  {% set version       = "%s"|format(salt['pillar.get']('mysql:version', '10.1')) %}
+  {% set major_version = "%s"|format(version.split('.')[:2]|join('.')) %}
+  {% set pkg_suffix    = '-' ~ major_version  %}
+  {% set os_family_map = salt['grains.filter_by']({
     'Debian': {
       'debconf_utils_pkg': 'debconf-utils',
-      'server_pkg': 'mariadb-server-' ~ mysql.version,
-      'client_pkg': 'mariadb-server-' ~ mysql.version,
+      'server_pkg': 'mariadb-server' ~ pkg_suffix,
+      'client_pkg': 'mariadb-client' ~ pkg_suffix,
       'python_pkg': 'python-mysqldb',
       'server_svc': 'mysql',
       'config_directory': '/etc/mysql/conf.d',
       'config_file': '/etc/mysql/my.cnf',
-      'backup_script': '/usr/local/bin/mysql_backup.sh',
+      'backup_script': '/usr/local/bin/backup.sh',
       'backup_log': '/var/log/mysql/backup.log',
       'repo': {
           'humanname': 'mariadb',
-          'name': 'deb http://ftp.igh.cnrs.fr/pub/mariadb/repo/' ~ mysql.version ~ '/' ~ os|lower ~ ' ' ~ oscodename ~ ' main',
+          'name': 'deb http://ftp.igh.cnrs.fr/pub/mariadb/repo/' ~ major_version ~ '/' ~ os|lower ~ ' ' ~ oscodename ~ ' main',
           'file': '/etc/apt/sources.list.d/mariadb.list',
-          'keyid': '177F4010FE56CA3336300305F1656F24C74CD1D8',
-          'keyserver': 'ha.pool.sks-keyservers.net',
+          'keyid': '199369E5404BD5FC7D2FE43BCBCB082A1BB943DB',
+          'keyserver': 'keyserver.ubuntu.com',
         }
     },
   }, grain='os_family', merge=salt['pillar.get']('mysql:lookup')) %}
 {% else %}
+  {% set version       = "%s"|format(salt['pillar.get']('mysql:version', '8.0')) %}
+  {% set major_version = "%s"|format(version.split('.')[:2]|join('.')) %}
+  {% set pkg_suffix    = '-' ~ major_version  %}
   {% if mysql.manage_repo %}
-    {% set os_map = salt['grains.filter_by']({
+    {% set os_family_map = salt['grains.filter_by']({
       'Debian': {
         'debconf_utils_pkg': 'debconf-utils',
         'server_pkg': 'mysql-community-server',
@@ -68,11 +72,11 @@
         'server_svc': 'mysql',
         'config_directory': '/etc/mysql/conf.d',
         'config_file': '/etc/mysql/my.cnf',
-        'backup_script': '/usr/local/bin/mysql_backup.sh',
+        'backup_script': '/usr/local/bin/backup.sh',
         'backup_log': '/var/log/mysql/backup.log',
         'repo': {
-            'humanname': 'mysql-' ~ mysql.version,
-            'name': 'deb http://repo.mysql.com/apt/' ~ os|lower ~ '/ ' ~ oscodename|lower ~ ' mysql-' ~ mysql.version,
+            'humanname': 'mysql-' ~ major_version,
+            'name': 'deb http://repo.mysql.com/apt/' ~ os|lower ~ '/ ' ~ oscodename|lower ~ ' mysql-' ~ major_version,
             'file': '/etc/apt/sources.list.d/mysql.list',
             'keyid': 'A4A9406876FCBD3C456770C88C718D3B5072E1F5',
             'keyserver': 'ha.pool.sks-keyservers.net',
@@ -80,22 +84,28 @@
       },
     }, grain='os_family', merge=salt['pillar.get']('mysql:lookup')) %}
   {% else %}
-    {% set os_map = salt['grains.filter_by']({
+    {% set os_family_map = salt['grains.filter_by']({
       'Debian': {
         'debconf_utils_pkg': 'debconf-utils',
-        'server_pkg': 'mysql-server-' ~ mysql.version,
-        'client_pkg': 'mysql-client-' ~ mysql.version,
+        'server_pkg': 'mysql-server' ~ pkg_suffix,
+        'client_pkg': 'mysql-client' ~ pkg_suffix,
         'python_pkg': 'python-mysqldb',
         'server_svc': 'mysql',
         'config_directory': '/etc/mysql/conf.d',
         'config_file': '/etc/mysql/my.cnf',
-        'backup_script': '/usr/local/bin/mysql_backup.sh',
+        'backup_script': '/usr/local/bin/backup.sh',
         'backup_log': '/var/log/mysql/backup.log',
       },
     }, grain='os_family', merge=salt['pillar.get']('mysql:lookup')) %}
   {% endif %}
 {% endif %}
 
-
 {## Merge the flavor_map to the default settings ##}
-{% do mysql.update(os_map) %}
+{% do default_settings.mysql.update(os_family_map) %}
+
+{## Merge in php:lookup pillar ##}
+{% set mysql = salt['pillar.get'](
+    'mysql',
+    default=default_settings.mysql,
+    merge=True
+) %}

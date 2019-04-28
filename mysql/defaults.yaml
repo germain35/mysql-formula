@@ -5,7 +5,6 @@ mysql:
   server: False
 
   application: mysql
-  version: 5.6
 
   manage_repo: False
 
